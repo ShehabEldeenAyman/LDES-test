@@ -1,0 +1,26 @@
+@prefix base: <https://example.com/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix ldes: <https://w3id.org/ldes#> .
+@prefix obs: <https://example.com/observations/> .
+@prefix pageURL: <ldes_page> .
+@prefix prov1: <http://purl.org/dc/terms/> .
+@prefix shacl: <http://www.w3.org/ns/shacl#> .
+@prefix tree: <https://w3id.org/tree#> .
+@prefix vsds: <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+base:observations a dcat:dataset ;
+    prov1:accessRights dcat:public ;
+    dcat:endpointURL base: ;
+    ldes:timestampPath prov1:generatedAtTime ;
+    ldes:versionOfPath prov1:isVersionOf ;
+    tree:shape [ shacl:targetClass vsds:Verkeerstelling ] ;
+    tree:view base:byPage .
+
+obs:byPage a tree:node ;
+    dcat:endpointURL pageURL: ;
+    tree:viewDescription obs:byPageDesc .
+
+obs:byPageDesc a tree:ViewDescription ;
+    tree:pageSize 5 .
+
