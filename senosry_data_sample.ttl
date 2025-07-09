@@ -7,7 +7,40 @@
 @prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix ldes: <https://w3id.org/ldes#> .
 
-# 1. Define the sensor and feature of interest (as before)
+
+
+# 1. Define the event stream
+
+    <#EventStream> a ldes:EventStream, tree:Tree  ;
+    rdfs:label "Salt Concentration LDES Stream" ;
+    ldes:timestampPath sosa:resultTime ;
+    tree:shape _:streamShape ;
+    tree:relation _:firstPageRelation .
+    
+# SHACL shape for the stream & pages: every member must have a timestamp
+_:streamShape
+    sh:property [
+        sh:path     sosa:resultTime ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1
+    ] .
+    
+# First-page relation from the stream
+_:firstPageRelation
+    a tree:Relation ;
+    tree:node   <#Page1> ;
+    tree:value  "page 1" ;
+    tree:shape  _:streamShape .
+    
+# Page 1: lists the first batch of observations
+<#Page1>
+    a tree:Tree ;
+    tree:shape      _:streamShape ;
+    tree:member     ex:Obs1, ex:Obs2, ex:Obs3 ;
+    # (Optionally link to subsequent pages:)
+    # tree:relation _:secondPageRelation .
+
+# 2. Define the sensor and feature of interest (as before)
 ex:SaltSensor1 a sosa:Sensor ;
     rdfs:label "Salt Concentration Sensor" ;
     sosa:observes ex:SaltConcentration .
@@ -15,16 +48,8 @@ ex:SaltSensor1 a sosa:Sensor ;
 ex:WaterSampleLocation1 a sosa:FeatureOfInterest ;
     rdfs:label "Water Sample Location 1" .
 
-# 2. Define the event stream
 
-    <#EventStream> a ldes:EventStream ;
-    rdfs:label "Salt Concentration LDES Stream" ;
-    ldes:timestampPath sosa:resultTime ;
-    # order events by the sosa:resultTime property:
-    tree:member ex:Obs1, ex:Obs2, ex:Obs3 . #only include members of the first page
-
-
-# 5. The actual observations (same as before)
+# 3. The actual observations (same as before)
 ex:Obs1 a sosa:Observation ;
     sosa:madeBySensor ex:SaltSensor1 ;
     sosa:hasFeatureOfInterest ex:WaterSampleLocation1 ;
@@ -48,4 +73,3 @@ ex:Obs3 a sosa:Observation ;
     sosa:resultTime "2025-05-15T10:00:00Z"^^xsd:dateTime ;
     sosa:hasSimpleResult "3450"^^xsd:double ;
     qudt:unit unit:PPM .
-
